@@ -19,7 +19,7 @@ const Header: React.FC = () => {
               <Sparkles className="w-5 h-5 text-primary" />
             </div>
             <span className="text-lg font-semibold text-foreground">
-              Képes vagy rá
+              AI Academy
             </span>
           </Link>
 
