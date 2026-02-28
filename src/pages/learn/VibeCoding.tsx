@@ -60,7 +60,7 @@ const VibeCoding: React.FC = () => {
   return (
     <article className="animate-fade-in">
       <h1 className="text-4xl md:text-5xl font-bold mb-6 text-foreground">{c.title}</h1>
-      
+
       <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
         {c.intro}
       </p>
@@ -80,12 +80,12 @@ const VibeCoding: React.FC = () => {
 
       <LessonNavigation
         prevLesson={{
-          path: '/learn/agentic-solutions',
-          titleKey: 'content.agenticSolutions',
+          path: '/learn/what-is-llm',
+          titleKey: 'content.whatIsLlm',
         }}
         nextLesson={{
-          path: '/learn/creating-mvp',
-          titleKey: 'content.mvp',
+          path: '/learn/agentic-solutions',
+          titleKey: 'content.agenticSolutions',
         }}
       />
     </article>

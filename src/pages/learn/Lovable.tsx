@@ -60,7 +60,7 @@ const LovablePage: React.FC = () => {
   return (
     <article className="animate-fade-in">
       <h1 className="text-4xl md:text-5xl font-bold mb-6 text-foreground">{c.title}</h1>
-      
+
       <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
         {c.intro}
       </p>
@@ -84,8 +84,8 @@ const LovablePage: React.FC = () => {
           titleKey: 'content.mvp',
         }}
         nextLesson={{
-          path: '/learn/supabase',
-          titleKey: 'content.supabase',
+          path: '/learn/github',
+          titleKey: 'content.github',
         }}
       />
     </article>

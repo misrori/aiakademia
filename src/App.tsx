@@ -7,13 +7,18 @@ import { LanguageProvider } from "@/contexts/LanguageContext";
 
 import Home from "./pages/Home";
 import LearnLayout from "./layouts/LearnLayout";
+import IdeaToLive from "./pages/learn/IdeaToLive";
 import WhatIsAI from "./pages/learn/WhatIsAI";
 import WhatIsLLM from "./pages/learn/WhatIsLLM";
 import VibeCoding from "./pages/learn/VibeCoding";
 import AgenticSolutions from "./pages/learn/AgenticSolutions";
-import LovablePage from "./pages/learn/Lovable";
-import Supabase from "./pages/learn/Supabase";
 import CreatingMVP from "./pages/learn/CreatingMVP";
+import LovablePage from "./pages/learn/Lovable";
+import GitHub from "./pages/learn/GitHub";
+import LocalDevelopment from "./pages/learn/LocalDevelopment";
+import CustomDomain from "./pages/learn/CustomDomain";
+import Supabase from "./pages/learn/Supabase";
+import AdvancedSupabase from "./pages/learn/AdvancedSupabase";
 import VirtualMachine from "./pages/learn/VirtualMachine";
 import Hosting from "./pages/learn/Hosting";
 import NotFound from "./pages/NotFound";
@@ -30,13 +35,18 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/learn" element={<LearnLayout />}>
+              <Route path="roadmap" element={<IdeaToLive />} />
               <Route path="what-is-ai" element={<WhatIsAI />} />
               <Route path="what-is-llm" element={<WhatIsLLM />} />
               <Route path="vibe-coding" element={<VibeCoding />} />
               <Route path="agentic-solutions" element={<AgenticSolutions />} />
-              <Route path="lovable" element={<LovablePage />} />
-              <Route path="supabase" element={<Supabase />} />
               <Route path="creating-mvp" element={<CreatingMVP />} />
+              <Route path="lovable" element={<LovablePage />} />
+              <Route path="github" element={<GitHub />} />
+              <Route path="local-dev" element={<LocalDevelopment />} />
+              <Route path="custom-domain" element={<CustomDomain />} />
+              <Route path="supabase" element={<Supabase />} />
+              <Route path="advanced-supabase" element={<AdvancedSupabase />} />
               <Route path="virtual-machine" element={<VirtualMachine />} />
               <Route path="hosting" element={<Hosting />} />
             </Route>

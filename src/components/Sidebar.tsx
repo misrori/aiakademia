@@ -1,12 +1,12 @@
 import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { 
-  Brain, 
-  MessageSquare, 
-  Wand2, 
-  Bot, 
-  Heart, 
+import {
+  Brain,
+  MessageSquare,
+  Wand2,
+  Bot,
+  Heart,
   Database,
   Server,
   Rocket,
@@ -27,30 +27,40 @@ interface SidebarSection {
 
 const sidebarSections: SidebarSection[] = [
   {
+    titleKey: 'sidebar.roadmap',
+    items: [
+      { titleKey: 'content.ideaToLive', path: '/learn/roadmap', icon: <Rocket className="w-4 h-4" /> },
+    ],
+  },
+  {
     titleKey: 'sidebar.aiBasics',
     items: [
       { titleKey: 'content.whatIsAi', path: '/learn/what-is-ai', icon: <Brain className="w-4 h-4" /> },
       { titleKey: 'content.whatIsLlm', path: '/learn/what-is-llm', icon: <MessageSquare className="w-4 h-4" /> },
+      { titleKey: 'content.whatIsVibeCoding', path: '/learn/vibe-coding', icon: <Wand2 className="w-4 h-4" /> },
       { titleKey: 'content.agenticSolutions', path: '/learn/agentic-solutions', icon: <Bot className="w-4 h-4" /> },
     ],
   },
   {
     titleKey: 'sidebar.vibeCoding',
     items: [
-      { titleKey: 'content.whatIsVibeCoding', path: '/learn/vibe-coding', icon: <Wand2 className="w-4 h-4" /> },
       { titleKey: 'content.mvp', path: '/learn/creating-mvp', icon: <Lightbulb className="w-4 h-4" /> },
+      { titleKey: 'content.lovable', path: '/learn/lovable', icon: <Heart className="w-4 h-4" /> },
     ],
   },
   {
     titleKey: 'sidebar.tools',
     items: [
-      { titleKey: 'content.lovable', path: '/learn/lovable', icon: <Heart className="w-4 h-4" /> },
-      { titleKey: 'content.supabase', path: '/learn/supabase', icon: <Database className="w-4 h-4" /> },
+      { titleKey: 'content.github', path: '/learn/github', icon: <Rocket className="w-4 h-4" /> },
+      { titleKey: 'content.localDev', path: '/learn/local-dev', icon: <Bot className="w-4 h-4" /> },
+      { titleKey: 'content.customDomain', path: '/learn/custom-domain', icon: <Wand2 className="w-4 h-4" /> },
     ],
   },
   {
     titleKey: 'sidebar.deployment',
     items: [
+      { titleKey: 'content.supabase', path: '/learn/supabase', icon: <Database className="w-4 h-4" /> },
+      { titleKey: 'content.advancedSupabase', path: '/learn/advanced-supabase', icon: <Database className="w-4 h-4" /> },
       { titleKey: 'content.virtualMachine', path: '/learn/virtual-machine', icon: <Server className="w-4 h-4" /> },
       { titleKey: 'content.hosting', path: '/learn/hosting', icon: <Rocket className="w-4 h-4" /> },
     ],
@@ -78,9 +88,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
 
       {/* Sidebar */}
       <aside
-        className={`fixed top-16 left-0 bottom-0 w-72 bg-sidebar border-r border-sidebar-border z-40 overflow-y-auto transition-transform duration-300 ${
-          isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
-        }`}
+        className={`fixed top-16 left-0 bottom-0 w-72 bg-sidebar border-r border-sidebar-border z-40 overflow-y-auto transition-transform duration-300 ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+          }`}
       >
         <nav className="p-4 space-y-6">
           {sidebarSections.map((section, index) => (
@@ -96,19 +105,17 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                       <NavLink
                         to={item.path}
                         onClick={onClose}
-                        className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all group ${
-                          isActive
-                            ? 'bg-sidebar-accent text-sidebar-accent-foreground'
-                            : 'text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground'
-                        }`}
+                        className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all group ${isActive
+                          ? 'bg-sidebar-accent text-sidebar-accent-foreground'
+                          : 'text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground'
+                          }`}
                       >
                         <span className={isActive ? 'text-primary' : 'text-muted-foreground group-hover:text-primary'}>
                           {item.icon}
                         </span>
                         <span className="flex-1">{t(item.titleKey)}</span>
-                        <ChevronRight className={`w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity ${
-                          isActive ? 'opacity-100 text-primary' : ''
-                        }`} />
+                        <ChevronRight className={`w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity ${isActive ? 'opacity-100 text-primary' : ''
+                          }`} />
                       </NavLink>
                     </li>
                   );

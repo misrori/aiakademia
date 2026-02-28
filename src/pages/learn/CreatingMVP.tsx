@@ -60,7 +60,7 @@ const CreatingMVP: React.FC = () => {
   return (
     <article className="animate-fade-in">
       <h1 className="text-4xl md:text-5xl font-bold mb-6 text-foreground">{c.title}</h1>
-      
+
       <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
         {c.intro}
       </p>
@@ -80,8 +80,8 @@ const CreatingMVP: React.FC = () => {
 
       <LessonNavigation
         prevLesson={{
-          path: '/learn/vibe-coding',
-          titleKey: 'content.whatIsVibeCoding',
+          path: '/learn/agentic-solutions',
+          titleKey: 'content.agenticSolutions',
         }}
         nextLesson={{
           path: '/learn/lovable',

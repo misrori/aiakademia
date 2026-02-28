@@ -74,7 +74,7 @@ const { data, error } = await supabase
   return (
     <article className="animate-fade-in">
       <h1 className="text-4xl md:text-5xl font-bold mb-6 text-foreground">{c.title}</h1>
-      
+
       <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
         {c.intro}
       </p>
@@ -98,12 +98,12 @@ const { data, error } = await supabase
 
       <LessonNavigation
         prevLesson={{
-          path: '/learn/lovable',
-          titleKey: 'content.lovable',
+          path: '/learn/custom-domain',
+          titleKey: 'content.customDomain',
         }}
         nextLesson={{
-          path: '/learn/virtual-machine',
-          titleKey: 'content.virtualMachine',
+          path: '/learn/advanced-supabase',
+          titleKey: 'content.advancedSupabase',
         }}
       />
     </article>

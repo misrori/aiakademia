@@ -60,7 +60,7 @@ const AgenticSolutions: React.FC = () => {
   return (
     <article className="animate-fade-in">
       <h1 className="text-4xl md:text-5xl font-bold mb-6 text-foreground">{c.title}</h1>
-      
+
       <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
         {c.intro}
       </p>
@@ -80,12 +80,12 @@ const AgenticSolutions: React.FC = () => {
 
       <LessonNavigation
         prevLesson={{
-          path: '/learn/what-is-llm',
-          titleKey: 'content.whatIsLlm',
-        }}
-        nextLesson={{
           path: '/learn/vibe-coding',
           titleKey: 'content.whatIsVibeCoding',
+        }}
+        nextLesson={{
+          path: '/learn/creating-mvp',
+          titleKey: 'content.mvp',
         }}
       />
     </article>

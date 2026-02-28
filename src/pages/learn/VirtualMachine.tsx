@@ -60,7 +60,7 @@ const VirtualMachine: React.FC = () => {
   return (
     <article className="animate-fade-in">
       <h1 className="text-4xl md:text-5xl font-bold mb-6 text-foreground">{c.title}</h1>
-      
+
       <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
         {c.intro}
       </p>
@@ -80,8 +80,8 @@ const VirtualMachine: React.FC = () => {
 
       <LessonNavigation
         prevLesson={{
-          path: '/learn/supabase',
-          titleKey: 'content.supabase',
+          path: '/learn/advanced-supabase',
+          titleKey: 'content.advancedSupabase',
         }}
         nextLesson={{
           path: '/learn/hosting',

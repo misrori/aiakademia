@@ -63,7 +63,7 @@ console.log(response.choices[0].message.content);`;
   return (
     <article className="animate-fade-in">
       <h1 className="text-4xl md:text-5xl font-bold mb-6 text-foreground">{c.title}</h1>
-      
+
       <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
         {c.intro}
       </p>
@@ -91,8 +91,8 @@ console.log(response.choices[0].message.content);`;
           titleKey: 'content.whatIsAi',
         }}
         nextLesson={{
-          path: '/learn/agentic-solutions',
-          titleKey: 'content.agenticSolutions',
+          path: '/learn/vibe-coding',
+          titleKey: 'content.whatIsVibeCoding',
         }}
       />
     </article>
