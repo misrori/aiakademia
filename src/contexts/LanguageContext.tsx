@@ -33,6 +33,7 @@ const translations: Record<Language, Record<string, string>> = {
     'content.ideaToLive': 'Ötletből élő weboldal',
     'content.whatIsAi': 'Mi az a mesterséges intelligencia?',
     'content.whatIsLlm': 'Mi az LLM?',
+    'content.promptEngineering': 'Prompt Engineering alapok',
     'content.whatIsVibeCoding': 'Mi az a Vibe Coding?',
     'content.agenticSolutions': 'Agentic megoldások',
     'content.lovable': 'Lovable platform',
@@ -44,6 +45,7 @@ const translations: Record<Language, Record<string, string>> = {
     'content.github': 'GitHub és GitHub Pages',
     'content.localDev': 'Lokális fejlesztés',
     'content.customDomain': 'Egyedi domain használata',
+    'content.chooseDomain': 'Domain név kiválasztása és megvásárlása',
 
     // Common
     'common.readMore': 'Tovább olvasom',
@@ -78,6 +80,7 @@ const translations: Record<Language, Record<string, string>> = {
     'content.ideaToLive': 'From Idea to Live Website',
     'content.whatIsAi': 'What is Artificial Intelligence?',
     'content.whatIsLlm': 'What is an LLM?',
+    'content.promptEngineering': 'Prompt Engineering Basics',
     'content.whatIsVibeCoding': 'What is Vibe Coding?',
     'content.agenticSolutions': 'Agentic Solutions',
     'content.lovable': 'Lovable Platform',
@@ -89,6 +92,7 @@ const translations: Record<Language, Record<string, string>> = {
     'content.github': 'GitHub & GitHub Pages',
     'content.localDev': 'Local Development',
     'content.customDomain': 'Using a Custom Domain',
+    'content.chooseDomain': 'Choosing and buying a domain name',
 
     // Common
     'common.readMore': 'Read more',

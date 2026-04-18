@@ -80,8 +80,8 @@ const VibeCoding: React.FC = () => {
 
       <LessonNavigation
         prevLesson={{
-          path: '/learn/what-is-llm',
-          titleKey: 'content.whatIsLlm',
+          path: '/learn/prompt-engineering',
+          titleKey: 'content.promptEngineering',
         }}
         nextLesson={{
           path: '/learn/agentic-solutions',

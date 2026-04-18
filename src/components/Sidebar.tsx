@@ -1,71 +1,8 @@
-import React from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
-import { useLanguage } from '@/contexts/LanguageContext';
-import {
-  Brain,
-  MessageSquare,
-  Wand2,
-  Bot,
-  Heart,
-  Database,
-  Server,
-  Rocket,
-  Lightbulb,
-  ChevronRight
-} from 'lucide-react';
-
-interface SidebarItem {
-  titleKey: string;
-  path: string;
-  icon: React.ReactNode;
-}
-
-interface SidebarSection {
-  titleKey: string;
-  items: SidebarItem[];
-}
-
-const sidebarSections: SidebarSection[] = [
-  {
-    titleKey: 'sidebar.roadmap',
-    items: [
-      { titleKey: 'content.ideaToLive', path: '/learn/roadmap', icon: <Rocket className="w-4 h-4" /> },
-    ],
-  },
-  {
-    titleKey: 'sidebar.aiBasics',
-    items: [
-      { titleKey: 'content.whatIsAi', path: '/learn/what-is-ai', icon: <Brain className="w-4 h-4" /> },
-      { titleKey: 'content.whatIsLlm', path: '/learn/what-is-llm', icon: <MessageSquare className="w-4 h-4" /> },
-      { titleKey: 'content.whatIsVibeCoding', path: '/learn/vibe-coding', icon: <Wand2 className="w-4 h-4" /> },
-      { titleKey: 'content.agenticSolutions', path: '/learn/agentic-solutions', icon: <Bot className="w-4 h-4" /> },
-    ],
-  },
-  {
-    titleKey: 'sidebar.vibeCoding',
-    items: [
-      { titleKey: 'content.mvp', path: '/learn/creating-mvp', icon: <Lightbulb className="w-4 h-4" /> },
-      { titleKey: 'content.lovable', path: '/learn/lovable', icon: <Heart className="w-4 h-4" /> },
-    ],
-  },
-  {
-    titleKey: 'sidebar.tools',
-    items: [
-      { titleKey: 'content.github', path: '/learn/github', icon: <Rocket className="w-4 h-4" /> },
-      { titleKey: 'content.localDev', path: '/learn/local-dev', icon: <Bot className="w-4 h-4" /> },
-      { titleKey: 'content.customDomain', path: '/learn/custom-domain', icon: <Wand2 className="w-4 h-4" /> },
-    ],
-  },
-  {
-    titleKey: 'sidebar.deployment',
-    items: [
-      { titleKey: 'content.supabase', path: '/learn/supabase', icon: <Database className="w-4 h-4" /> },
-      { titleKey: 'content.advancedSupabase', path: '/learn/advanced-supabase', icon: <Database className="w-4 h-4" /> },
-      { titleKey: 'content.virtualMachine', path: '/learn/virtual-machine', icon: <Server className="w-4 h-4" /> },
-      { titleKey: 'content.hosting', path: '/learn/hosting', icon: <Rocket className="w-4 h-4" /> },
-    ],
-  },
-];
+import React from "react";
+import { NavLink, useLocation } from "react-router-dom";
+import { BookOpen, CheckCircle2, ChevronRight, PlayCircle } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { allLessons, firstCourse } from "@/data/courseContent";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -73,8 +10,9 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
-  const { t } = useLanguage();
+  const { language } = useLanguage();
   const location = useLocation();
+  const activeLessonId = location.pathname.replace("/learn/", "");
 
   return (
     <>
@@ -92,30 +30,55 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           }`}
       >
         <nav className="p-4 space-y-6">
-          {sidebarSections.map((section, index) => (
-            <div key={index} className="space-y-2">
+          <div className="rounded-xl border border-sidebar-border bg-sidebar-accent/50 p-4">
+            <p className="text-xs uppercase tracking-wider text-muted-foreground mb-2">
+              {language === "hu" ? "Aktiv kurzus" : "Active course"}
+            </p>
+            <h2 className="text-sm font-semibold text-sidebar-accent-foreground leading-relaxed">
+              {firstCourse.title[language]}
+            </h2>
+            <p className="mt-2 text-xs text-muted-foreground">
+              {allLessons.length} {language === "hu" ? "lecke" : "lessons"}
+            </p>
+          </div>
+
+          {firstCourse.sections.map((section) => (
+            <div key={section.id} className="space-y-2">
               <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-3">
-                {t(section.titleKey)}
+                {section.title[language]}
               </h3>
               <ul className="space-y-1">
-                {section.items.map((item) => {
-                  const isActive = location.pathname === item.path;
+                {section.lessons.map((lesson) => {
+                  const lessonPath = `/learn/${lesson.id}`;
+                  const isActive = location.pathname === lessonPath;
+                  const isCompleted = allLessons.findIndex((l) => l.id === lesson.id) < allLessons.findIndex((l) => l.id === activeLessonId);
+
                   return (
-                    <li key={item.path}>
+                    <li key={lesson.id}>
                       <NavLink
-                        to={item.path}
+                        to={lessonPath}
                         onClick={onClose}
-                        className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all group ${isActive
-                          ? 'bg-sidebar-accent text-sidebar-accent-foreground'
-                          : 'text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground'
-                          }`}
+                        className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all group ${
+                          isActive
+                            ? "bg-sidebar-accent text-sidebar-accent-foreground"
+                            : "text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground"
+                        }`}
                       >
-                        <span className={isActive ? 'text-primary' : 'text-muted-foreground group-hover:text-primary'}>
-                          {item.icon}
+                        <span className={isActive ? "text-primary" : "text-muted-foreground group-hover:text-primary"}>
+                          {isCompleted ? (
+                            <CheckCircle2 className="w-4 h-4" />
+                          ) : lesson.format === "reading" ? (
+                            <BookOpen className="w-4 h-4" />
+                          ) : (
+                            <PlayCircle className="w-4 h-4" />
+                          )}
                         </span>
-                        <span className="flex-1">{t(item.titleKey)}</span>
-                        <ChevronRight className={`w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity ${isActive ? 'opacity-100 text-primary' : ''
-                          }`} />
+                        <span className="flex-1">{lesson.title[language]}</span>
+                        <ChevronRight
+                          className={`w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity ${
+                            isActive ? "opacity-100 text-primary" : ""
+                          }`}
+                        />
                       </NavLink>
                     </li>
                   );

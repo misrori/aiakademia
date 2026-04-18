@@ -91,8 +91,8 @@ console.log(response.choices[0].message.content);`;
           titleKey: 'content.whatIsAi',
         }}
         nextLesson={{
-          path: '/learn/vibe-coding',
-          titleKey: 'content.whatIsVibeCoding',
+          path: '/learn/prompt-engineering',
+          titleKey: 'content.promptEngineering',
         }}
       />
     </article>

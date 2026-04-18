@@ -32,7 +32,7 @@ const Header: React.FC = () => {
               {t('nav.home')}
             </Link>
             <Link
-              to="/learn/what-is-ai"
+              to="/learn"
               className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
             >
               {t('nav.courses')}
@@ -66,7 +66,7 @@ const Header: React.FC = () => {
               {t('nav.home')}
             </Link>
             <Link
-              to="/learn/what-is-ai"
+              to="/learn"
               className="block px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-secondary rounded-lg transition-colors"
               onClick={() => setMobileMenuOpen(false)}
             >

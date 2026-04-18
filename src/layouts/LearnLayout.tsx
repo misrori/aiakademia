@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { Outlet } from 'react-router-dom';
-import Header from '@/components/Header';
-import Sidebar from '@/components/Sidebar';
-import { Menu } from 'lucide-react';
+import React, { useState } from "react";
+import { Outlet } from "react-router-dom";
+import Header from "@/components/Header";
+import Sidebar from "@/components/Sidebar";
+import { Menu } from "lucide-react";
 
 const LearnLayout: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -22,7 +22,7 @@ const LearnLayout: React.FC = () => {
 
       {/* Main content */}
       <main className="pt-16 lg:pl-72">
-        <div className="max-w-4xl mx-auto px-6 py-12">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-10">
           <Outlet />
         </div>
       </main>
