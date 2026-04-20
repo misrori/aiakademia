@@ -653,7 +653,16 @@ A Pages működhet úgy is, hogy a repo **gyökerében** vagy egy \`docs/\` mapp
 
 2. **\`npm run build\`:** ellenőrizd lokálisan, hogy a \`dist/\` megfelelő-e.
 
-3. **Router (React Router):** ha **client-side routing** van, GitHub Pages-en szükség lehet **404.html** trükkre vagy **HashRouter**-re – projektfüggő.
+3. **Router (React Router) beállítása:** A React Routernek tudnia kell, hogy az alkalmazás nem a domain gyökerében, hanem egy alkönyvtárban fut (ha nem custom domaint használsz).
+   1. Keresd meg az \`src/App.tsx\` fájlt.
+   2. A \`<BrowserRouter>\` komponenshez add hozzá a \`basename\` paramétert:
+      \`\`\`tsx
+      <BrowserRouter basename={import.meta.env.BASE_URL}>
+        <Routes>
+          {/* ... útvonalak */}
+        </Routes>
+      </BrowserRouter>
+      \`\`\`
 
 4. **Deploy:** a példában egy **GitHub Action** buildel (\`bun install\`, \`bun run build\`), majd az **actions/upload-pages-artifact** feltölti az artifactot, az **actions/deploy-pages** pedig publikálja a **GitHub Pages**-re. A repó **Settings → Pages** menüjében a forrást **„GitHub Actions"**-re kell állítani.
 
@@ -669,9 +678,23 @@ ${workflowViteGhPages}
 
 ---
 
-## Custom domain – hol tartunk?
+## Egyedi domain (Custom Domain) használata
 
-A GitHub Pages beállításainál (**Settings → Pages**) megadható **Custom domain** – ehhez a **DNS**-t a domain szolgáltatónál kell állítani. Ezt a **4. szekció** lépésről lépésre lefedi: a **saját domained** fogjuk **átirányítani** a GitHub Pages által kiszolgált oldalra.
+Ha saját domaint szeretnél használni (pl. \`www.pelda.hu\`):
+
+1. **vite.config.ts**: A \`base\` értéket állítsd vissza gyökérre (\`/\`):
+   \`\`\`ts
+   export default defineConfig({
+     base: "/", // <--- Egyedi domain esetén csak egy perjel kell
+     // ...
+   });
+   \`\`\`
+2. **CNAME fájl**: Hozz létre egy \`CNAME\` nevű fájlt (kiterjesztés nélkül!) a \`public\` mappában. Tartalma csak a domain neved legyen (pl. \`pelda.hu\`):
+   \`\`\`text
+   pelda.hu
+   \`\`\`
+3. **GitHub Settings**: A repository **Settings → Pages → Custom domain** mezőjébe írd be a domaint és mentsd el.
+4. **DNS beállítás**: A domain szolgáltatódnál állítsd be a CNAME rekordot a \`felhasznalonev.github.io\` címre (vagy az A rekordokat a GitHub szervereire).
 
 ---
 
@@ -731,7 +754,16 @@ You can publish plain static files **without** a bundler—useful to understand 
 
 2. **\`npm run build\`:** verify \`dist/\` locally.
 
-3. **Client-side routers:** may need **hash mode** or **404.html** SPA fallback.
+3. **Client-side routers configuration:** React Router needs to know that the app is running in a subdirectory (if not using a custom domain).
+   1. Locate the \`src/App.tsx\` file.
+   2. Add the \`basename\` prop to the \`<BrowserRouter>\` component:
+      \`\`\`tsx
+      <BrowserRouter basename={import.meta.env.BASE_URL}>
+        <Routes>
+          {/* ... routes */}
+        </Routes>
+      </BrowserRouter>
+      \`\`\`
 
 4. **Deploy:** the sample workflow runs **bun install** + **bun run build**, then **actions/upload-pages-artifact** uploads the artifact and **actions/deploy-pages** publishes it to GitHub Pages. In **Settings → Pages**, set the source to **"GitHub Actions"**.
 
@@ -747,9 +779,23 @@ Follow upstream docs for the latest action versions and Node compatibility.
 
 ---
 
-## Custom domain—where we go next
+## Using a Custom Domain
 
-**Settings → Pages → Custom domain** is configured on GitHub, but **DNS** is edited at your registrar. **Section 4** walks through pointing **your domain** to GitHub Pages.
+If you want to use your own domain (e.g., \`www.example.com\`):
+
+1. **vite.config.ts**: Set the \`base\` value back to root (\`/\`):
+   \`\`\`ts
+   export default defineConfig({
+     base: "/", // <--- For custom domains, just a single forward slash is needed
+     // ...
+   });
+   \`\`\`
+2. **CNAME file**: Create a file named \`CNAME\` (no extension!) in the \`public\` folder. Its content should be just your domain name (e.g., \`example.com\`):
+   \`\`\`text
+   example.com
+   \`\`\`
+3. **GitHub Settings**: Enter the domain in the **Settings → Pages → Custom domain** field and save.
+4. **DNS Setting**: At your domain provider, set the CNAME record to \`username.github.io\` (or A records to GitHub's servers).
 
 ---
 
