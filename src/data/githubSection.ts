@@ -615,9 +615,103 @@ Embedded video is a general **GitHub Actions** intro—replace with your own ste
       duration: "40–55 perc + videó",
       videoUrl: "https://www.youtube.com/embed/QyFcl_Fba-k",
       markdown: {
-        hu: `## Mi az a GitHub Pages?
+                hu: `### 🚀 Válassz módszert a publikáláshoz
 
-A **GitHub Pages** **ingyenes statikus webhosztolás** (megfelelő beállításokkal): HTML/CSS/JS fájlokat szolgál ki **HTTPS**-en, közvetlenül egy **GitHub repository**-ból vagy egy **Actions** workflow **gh-pages** ágára feltöltött buildből.
+Ebben a részben két út közül választhatsz: az **AI-alapú automatizált** módszer (gyors és javasolt), vagy a **Manuális** beállítás, ha szeretnéd érteni a folyamat minden lépését.
+
+---
+
+## „A” módszer: AI Prompt (Javasolt)
+
+Ezt a promptot másold be a Lovable-nek vagy az AI asszisztensednek.
+
+### 1. Első publikálás (GitHub Pages)
+**Másold be a GitHub projekt URL-edet ide:** \`[IDE MÁSOLD AZ URL-T]\`
+
+\`\`\`text
+Szia! Szeretném ezt a projektet GitHub Pages-re deployolni. Kérlek végezd el az alábbi módosításokat:
+
+A Github repo url-em: [IDE MÁSOLD AZ URL-T]
+
+1. Config beállítása: A vite.config.ts fájlban keresd meg az export default defineConfig({ részt, és add hozzá vagy módosítsd a base értéket a repository nevére:
+
+export default defineConfig({
+  base: "/repo-neve/", // <--- Ide írd a saját repository-d nevét
+  plugins: [react()],
+  // ...
+});
+
+Ezen kívül az src/App.tsx-ben keresd meg a <BrowserRouter> komponenst, és add hozzá a basename paramétert:
+
+<BrowserRouter basename={import.meta.env.BASE_URL}>
+  <Routes>
+    {/* ... útvonalak */}
+  </Routes>
+</BrowserRouter>
+
+2. Deploy script: Hozd létre a .github/workflows/deploy.yml fájlt az alábbi tartalommal (használd ezt az Actions scriptet):
+
+${workflowViteGhPages}
+\`\`\`
+
+### 2. Egyedi domain beállítása (Opcionális)
+Ha már van saját domained (pl. \`www.pelda.hu\`), használd ezt a promptot:
+
+\`\`\`text
+Szia! Egyedi domaint állítottam be a GitHub Pages-hez: [IDE MÁSOLD A DOMAINEDET]. Kérlek frissítsd a projektet:
+
+1. A Vite 'base' paraméterét állítsd gyökérre ('/'), mert egyedi domain esetén nem kell a repo név előtag.
+2. Hozz létre egy 'public/CNAME' fájlt, aminek a tartalma csak a domain nevem.
+3. Ellenőrizd, hogy az src/App.tsx továbbra is az import.meta.env.BASE_URL-t használja a BrowserRouter esetén.
+\`\`\`
+
+---
+
+## „B” módszer: Manuális beállítás
+
+Ha kézzel szeretnéd elvégezni a beállításokat, kövesd az alábbi lépéseket:
+
+### 1. Alapbeállítások a GitHub Pages-hez
+1. **vite.config.ts**: Keresd meg az \`export default defineConfig({\` részt, és add hozzá vagy módosítsd a \`base\` értéket a repository nevére:
+   \`\`\`ts
+   export default defineConfig({
+     base: "/repo-neve/", // <--- Ide írd a saját repository-d nevét
+     plugins: [react()],
+     // ...
+   });
+   \`\`\`
+2. **src/App.tsx**: Keresd meg a \`<BrowserRouter>\` komponenst, és add hozzá a \`basename\` paramétert:
+   \`\`\`tsx
+   <BrowserRouter basename={import.meta.env.BASE_URL}>
+     <Routes>
+       {/* ... útvonalak */}
+     </Routes>
+   </BrowserRouter>
+   \`\`\`
+3. **Workflow**: Hozd létre a \`.github/workflows/deploy.yml\` fájlt a fenti YAML kóddal.
+4. **GitHub Settings**: A repóban: *Settings -> Pages -> Build and deployment -> Source: GitHub Actions*.
+
+### 2. Egyedi domain manuális beállítása
+Ha saját domaint szeretnél használni:
+1. **vite.config.ts**: Módosítsd a \`base\` értéket gyökérre (\`/\`):
+   \`\`\`ts
+   export default defineConfig({
+     base: "/", // <--- Egyedi domain esetén csak egy perjel kell
+     // ...
+   });
+   \`\`\`
+2. **CNAME fájl**: Hozz létre egy \`CNAME\` nevű fájlt (kiterjesztés nélkül!) a \`public\` mappában. Tartalma csak a domain neved legyen (pl. \`pelda.hu\`):
+   \`\`\`text
+   pelda.hu
+   \`\`\`
+3. **DNS beállítás**: A domain szolgáltatódnál állítsd be a CNAME rekordot a \`felhasznalonev.github.io\` címre, vagy az A rekordokat a GitHub szervereire.
+4. **GitHub Settings**: *Settings -> Pages -> Custom domain* mezőbe írd be a domaint és mentsd el.
+
+---
+
+## Mi az a GitHub Pages?
+
+A **GitHub Pages** **ingyenes statikus webhosztolás** (megfelelő beállításokkal): HTML/CSS/JS fájlokat szolgál ki **HTTPS**-en, közvetlenül egy **GitHub repository**-ból vagy egy **Actions** workflow-ból.
 
 **Mire jó?** Landing oldalak, dokumentáció, és a kurzusban: a **Lovable-ból exportált** (tipikusan **Vite + React**) projekt **build** utáni \`dist/\` mappájának kiszolgálása.
 
@@ -630,85 +724,15 @@ A **GitHub Pages** **ingyenes statikus webhosztolás** (megfelelő beállításo
 | **Felhasználói oldal** (user site) | \`https://felhasznalonev.github.io/\` – speciális \`felhasznalonev.github.io\` nevű repo |
 | **Projekt oldal** (project site) | \`https://felhasznalonev.github.io/repository-nev/\` – a repo neve **path prefix** az útvonalban |
 
-Ha **projekt Pages**-t használsz, a böngésző **minden kérést** a \`/repository-nev/\` alá tesz – ezért a **Vite** (és más bundlerek) **\`base\`** beállítását **egyeztetni kell** a repo nevével, különben a JS/CSS **rossz útvonalról** töltődik (fehér oldal / 404).
-
----
-
-## Legyen egy egyszerű \`index.html\` is
-
-A Pages működhet úgy is, hogy a repo **gyökerében** vagy egy \`docs/\` mappában ott van egy **statikus** \`index.html\` – **build nélkül**. Ez jól mutatja, **mi történik**: a GitHub kiszolgálja a fájlt. A **Lovable / Vite** export viszont **build lépést** igényel (\`npm run build\` → \`dist/\`).
-
----
-
-## Lovable-ból exportált Vite projekt – mit állíts be?
-
-1. **\`vite.config.ts\` – \`base\`:** projekt Pages esetén állítsd a repó nevére végződő útra, pl.:
-   \`\`\`ts
-   export default defineConfig({
-     base: "/repository-nev/",
-     // plugins: [react()],
-   });
-   \`\`\`
-   Cseréld a \`repository-nev\`-et a **valós** GitHub repo nevére.
-
-2. **\`npm run build\`:** ellenőrizd lokálisan, hogy a \`dist/\` megfelelő-e.
-
-3. **Router (React Router) beállítása:** A React Routernek tudnia kell, hogy az alkalmazás nem a domain gyökerében, hanem egy alkönyvtárban fut (ha nem custom domaint használsz).
-   1. Keresd meg az \`src/App.tsx\` fájlt.
-   2. A \`<BrowserRouter>\` komponenshez add hozzá a \`basename\` paramétert:
-      \`\`\`tsx
-      <BrowserRouter basename={import.meta.env.BASE_URL}>
-        <Routes>
-          {/* ... útvonalak */}
-        </Routes>
-      </BrowserRouter>
-      \`\`\`
-
-4. **Deploy:** a példában egy **GitHub Action** buildel (\`bun install\`, \`bun run build\`), majd az **actions/upload-pages-artifact** feltölti az artifactot, az **actions/deploy-pages** pedig publikálja a **GitHub Pages**-re. A repó **Settings → Pages** menüjében a forrást **„GitHub Actions"**-re kell állítani.
-
----
-
-## Példa workflow: build + gh-pages ág
-
-\`\`\`yaml
-${workflowViteGhPages}
-\`\`\`
-
-**Megjegyzés:** a **GitHub** Actions dokumentációját érdemes a legfrissebb verzió szerint követni; a **Bun** verzió \`latest\` értékre állítva mindig a legfrissebbet használja.
-
----
-
-## Egyedi domain (Custom Domain) használata
-
-Ha saját domaint szeretnél használni (pl. \`www.pelda.hu\`):
-
-1. **vite.config.ts**: A \`base\` értéket állítsd vissza gyökérre (\`/\`):
-   \`\`\`ts
-   export default defineConfig({
-     base: "/", // <--- Egyedi domain esetén csak egy perjel kell
-     // ...
-   });
-   \`\`\`
-2. **CNAME fájl**: Hozz létre egy \`CNAME\` nevű fájlt (kiterjesztés nélkül!) a \`public\` mappában. Tartalma csak a domain neved legyen (pl. \`pelda.hu\`):
-   \`\`\`text
-   pelda.hu
-   \`\`\`
-3. **GitHub Settings**: A repository **Settings → Pages → Custom domain** mezőjébe írd be a domaint és mentsd el.
-4. **DNS beállítás**: A domain szolgáltatódnál állítsd be a CNAME rekordot a \`felhasznalonev.github.io\` címre (vagy az A rekordokat a GitHub szervereire).
+Ha **projekt Pages**-t használsz saját domain nélkül, a böngésző minden kérést a \`/repository-nev/\` alá tesz – ezért kell a **Vite \`base\`** beállítása.
 
 ---
 
 ## Összekötés a kurzus többi részével
 
 - **2. szekció:** Lovable → **export** → kód a GitHubon.
-- **3. szekció (most):** **Actions** + **Pages** → élő URL \`*.github.io\` alatt.
-- **4. szekció:** **Saját domain** + **HTTPS**.
-
----
-
-## Demó videó
-
-A beágyazott videó **GitHub Pages** bevezető – cserélhető saját anyagra, ahol a **Lovable-export + base + Actions** lépéseit mutatod.
+- **3. szekció (most):** **Actions** + **Pages** → élő URL \`*.github.io\` alatt vagy saját domainen.
+- **4. szekció:** **Saját domain** + **HTTPS** beállítása mélyebben (DNS).
 
 ---
 
@@ -716,74 +740,87 @@ A beágyazott videó **GitHub Pages** bevezető – cserélhető saját anyagra,
 
 1. Hozz létre egy teszt repót, tegyél be egy minimális **Vite** projektet, állítsd be a \`base\`-t, futtasd a fenti jellegű workflow-t.
 2. Nyisd meg a \`https://felhasznalonev.github.io/repository-nev/\` címet – töltődnek-e a CSS/JS fájlok?
-3. Olvasd el a Pages **Custom domain** szekcióját előkészületként a 4. szekcióhoz.
+3. Próbáld ki az egyedi domain beállítását, ha van saját címed!
 `,
-        en: `## What is GitHub Pages?
+                en: `### 🚀 Choose Your Deployment Method
 
-**GitHub Pages** is **free static hosting** (with limits): it serves HTML/CSS/JS over **HTTPS** from a **branch** (often **gh-pages**) produced by a build.
-
-**Why it matters here:** publish the **built output** (\`dist/\`) of a **Lovable-exported** (**Vite + React**) project.
+In this section, you can choose between two paths: the **AI-based automated** method (fast and recommended) or the **Manual** setup if you want to understand every step of the process.
 
 ---
 
-## How the URL is shaped
+## Method "A": AI Prompt (Recommended)
 
-| Kind | Example |
-|------|---------|
-| **User site** | \`https://username.github.io/\` (special \`username.github.io\` repo) |
-| **Project site** | \`https://username.github.io/repo-name/\` — repo name is a **path prefix** |
+Copy and paste this prompt into Lovable or your AI assistant.
 
-For **project Pages**, configure **Vite \`base\`** to match \`/repo-name/\` or assets break.
+### 1. Initial Deployment (GitHub Pages)
+**Paste your GitHub project URL here:** \`[PASTE URL HERE]\`
 
----
+\`\`\`text
+Hi! I want to deploy this project to GitHub Pages. Please perform the following changes:
 
-## Simple \`index.html\` (no build)
+My Github repo URL is: [PASTE URL HERE]
 
-You can publish plain static files **without** a bundler—useful to understand Pages. Lovable/Vite exports usually need **\`npm run build\`**.
+1. Configure Settings: In vite.config.ts, find the export default defineConfig({ part and add or update the base value to match the repository name:
 
----
+export default defineConfig({
+  base: "/repo-name/", // <--- Enter your repository name here
+  plugins: [react()],
+  // ...
+});
 
-## Lovable / Vite export—what to configure?
+Also, in src/App.tsx, find the <BrowserRouter> component and add the basename prop:
 
-1. **\`vite.config.ts\` → \`base\`:** for **project Pages**:
-   \`\`\`ts
-   export default defineConfig({
-     base: "/repo-name/",
-   });
-   \`\`\`
+<BrowserRouter basename={import.meta.env.BASE_URL}>
+  <Routes>
+    {/* ... routes */}
+  </Routes>
+</BrowserRouter>
 
-2. **\`npm run build\`:** verify \`dist/\` locally.
+2. Deploy script: Create a .github/workflows/deploy.yml file with the following content (use this Actions script):
 
-3. **Client-side routers configuration:** React Router needs to know that the app is running in a subdirectory (if not using a custom domain).
-   1. Locate the \`src/App.tsx\` file.
-   2. Add the \`basename\` prop to the \`<BrowserRouter>\` component:
-      \`\`\`tsx
-      <BrowserRouter basename={import.meta.env.BASE_URL}>
-        <Routes>
-          {/* ... routes */}
-        </Routes>
-      </BrowserRouter>
-      \`\`\`
-
-4. **Deploy:** the sample workflow runs **bun install** + **bun run build**, then **actions/upload-pages-artifact** uploads the artifact and **actions/deploy-pages** publishes it to GitHub Pages. In **Settings → Pages**, set the source to **"GitHub Actions"**.
-
----
-
-## Example workflow: build + gh-pages
-
-\`\`\`yaml
 ${workflowViteGhPages}
 \`\`\`
 
-Follow upstream docs for the latest action versions and Node compatibility.
+### 2. Custom Domain Setup (Optional)
+If you already have your own domain (e.g., \`www.myapp.com\`), use this prompt:
+
+\`\`\`text
+Hi! I've set up a custom domain for my GitHub Pages: [PASTE YOUR DOMAIN HERE]. Please update the project accordingly:
+
+1. Set the Vite 'base' parameter to the root ('/'), as custom domains don't need the repo name prefix.
+2. Create a 'public/CNAME' file containing only my domain name.
+3. Ensure that src/App.tsx still uses import.meta.env.BASE_URL for the BrowserRouter.
+\`\`\`
 
 ---
 
-## Using a Custom Domain
+## Method "B": Manual Setup
 
-If you want to use your own domain (e.g., \`www.example.com\`):
+If you prefer to perform the settings manually, follow these steps:
 
-1. **vite.config.ts**: Set the \`base\` value back to root (\`/\`):
+### 1. Basic Settings for GitHub Pages
+1. **vite.config.ts**: Locate the \`export default defineConfig({\` part, and add or update the \`base\` value to match your repository name:
+   \`\`\`ts
+   export default defineConfig({
+     base: "/repo-name/", // <--- Enter your repository name here
+     plugins: [react()],
+     // ...
+   });
+   \`\`\`
+2. **src/App.tsx**: Locate the \`<BrowserRouter>\` component and add the \`basename\` prop:
+   \`\`\`tsx
+   <BrowserRouter basename={import.meta.env.BASE_URL}>
+     <Routes>
+       {/* ... routes */}
+     </Routes>
+   </BrowserRouter>
+   \`\`\`
+3. **Workflow**: Create the \`.github/workflows/deploy.yml\` file using the YAML code provided above.
+4. **GitHub Settings**: In the repo: *Settings -> Pages -> Build and deployment -> Source: GitHub Actions*.
+
+### 2. Manual Custom Domain Setup
+If you want to use a custom domain:
+1. **vite.config.ts**: Change the \`base\` value to root (\`/\`):
    \`\`\`ts
    export default defineConfig({
      base: "/", // <--- For custom domains, just a single forward slash is needed
@@ -794,30 +831,43 @@ If you want to use your own domain (e.g., \`www.example.com\`):
    \`\`\`text
    example.com
    \`\`\`
-3. **GitHub Settings**: Enter the domain in the **Settings → Pages → Custom domain** field and save.
-4. **DNS Setting**: At your domain provider, set the CNAME record to \`username.github.io\` (or A records to GitHub's servers).
+3. **DNS Setting**: At your domain provider, set the CNAME record to \`username.github.io\`, or A records to GitHub's servers.
+4. **GitHub Settings**: Enter the domain in the *Settings -> Pages -> Custom domain* field and save.
 
 ---
 
-## How this connects
+## What is GitHub Pages?
 
-- **Section 2:** export from Lovable → code on GitHub.
-- **Section 3:** Actions + Pages → \`*.github.io\` URL.
-- **Section 4:** **your domain** + **HTTPS**.
+**GitHub Pages** is **free static web hosting** (with proper configuration): it serves HTML/CSS/JS files over **HTTPS** directly from a **GitHub repository** or from an **Actions** workflow.
+
+**Why is it useful?** For landing pages, documentation, and in this course: serving the \`dist/\` folder of your **Lovable-exported** (**Vite + React**) project after building.
 
 ---
 
-## Demo video
+## How the URL is Shaped
 
-Embedded: general **GitHub Pages** intro—replace with your own Lovable + Vite + Actions walkthrough.
+| Type | Example URL |
+|------|-------------|
+| **User site** | \`https://username.github.io/\` – special \`username.github.io\` repo |
+| **Project site** | \`https://username.github.io/repository-name/\` – the repo name is a **path prefix** |
+
+If you use **project Pages** without a custom domain, the browser puts every request under \`/repository-name/\` – that's why the **Vite \`base\`** setting is required.
+
+---
+
+## How This Connects
+
+- **Section 2:** Lovable → **export** → code on GitHub.
+- **Section 3 (now):** **Actions** + **Pages** → live URL under \`*.github.io\` or a custom domain.
+- **Section 4:** **Custom domain** + **HTTPS** setup.
 
 ---
 
 ## Exercise
 
-1. Create a test repo with a minimal **Vite** app, set \`base\`, run a deploy workflow.
-2. Open \`https://username.github.io/repo-name/\`—do assets load?
-3. Skim **Custom domain** docs to prepare for Section 5.
+1. Create a test repo, add a minimal **Vite** project, set the \`base\`, and run a workflow like the one above.
+2. Open the \`https://username.github.io/repository-name/\` address – do the CSS/JS files load?
+3. Try setting up a custom domain if you have your own address!
 `,
       },
     },
