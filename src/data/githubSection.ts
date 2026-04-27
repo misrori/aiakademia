@@ -109,8 +109,8 @@ const workflowViteGhPages = [
 export const githubAndDeploySection: CourseSection = {
   id: "github-and-deploy",
   title: {
-    hu: "4. szekció – GitHub, Actions, Pages",
-    en: "Section 4 – GitHub, Actions, Pages",
+    hu: "4. szekció – GitHub, Actions, Pages, Vercel",
+    en: "Section 4 – GitHub, Actions, Pages, Vercel",
   },
   lessons: [
     {
@@ -615,7 +615,16 @@ Embedded video is a general **GitHub Actions** intro—replace with your own ste
       duration: "40–55 perc + videó",
       videoUrl: "https://www.youtube.com/embed/QyFcl_Fba-k",
       markdown: {
-                hu: `### 🚀 Válassz módszert a publikáláshoz
+                hu: `> ⚠️ **Figyelem – csak bizonyos projekt-stackre működik zökkenőmentesen!** Az alábbi útmutató egy klasszikus **Vite + React + react-router-dom** stack-re van szabva: a projektben létezik \`vite.config.ts\` és egy \`src/App.tsx\` \`<BrowserRouter>\`-rel. Ha a te projekted másképp néz ki – nincs \`App.tsx\`, más router van (pl. \`<HashRouter>\`, Next.js App Router, Remix), vagy nem Vite-alapú a build – akkor a lentebbi lépések **nem biztos, hogy működnek**, és a GitHub Pages deploy **404**-et, üres képernyőt vagy nem töltődő fájlokat adhat.
+>
+> **Három lehetőséged van ilyenkor:**
+> 1. **Hash routing:** cseréld a routert \`<HashRouter>\`-re – a Pages path prefix így nem zavar be (URL-k ilyenek lesznek: \`pelda.hu/#/about\`).
+> 2. **Másik platform:** ha SSR-re (Next.js, Remix) épül a projekt, a GitHub Pages nem jó választás – lépj a **4.4 Vercel** leckére.
+> 3. **Refaktor a szabványra:** kérdezd meg a buildert / AI-t, hogy alakítsa át a projektet Vite + react-router-dom-ra – utána az alábbi útmutató működik.
+>
+> Ha már a **2.1 lecke 6. lépését** követted (GitHub Pages kompatibilitás blokk a promptban), valószínűleg ez már rendben van.
+
+### 🚀 Válassz módszert a publikáláshoz
 
 Ebben a részben két út közül választhatsz: az **AI-alapú automatizált** módszer (gyors és javasolt), vagy a **Manuális** beállítás, ha szeretnéd érteni a folyamat minden lépését.
 
@@ -742,7 +751,16 @@ Ha **projekt Pages**-t használsz saját domain nélkül, a böngésző minden k
 2. Nyisd meg a \`https://felhasznalonev.github.io/repository-nev/\` címet – töltődnek-e a CSS/JS fájlok?
 3. Próbáld ki az egyedi domain beállítását, ha van saját címed!
 `,
-                en: `### 🚀 Choose Your Deployment Method
+                en: `> ⚠️ **Warning — this guide assumes a specific project stack!** The instructions below are tailored to a classic **Vite + React + react-router-dom** setup: the project has a \`vite.config.ts\` and an \`src/App.tsx\` with \`<BrowserRouter>\`. If your project looks different — no \`App.tsx\`, a different router (e.g. \`<HashRouter>\`, Next.js App Router, Remix), or a non-Vite build — the steps below **may not work**, and the GitHub Pages deploy can return **404s**, a blank screen, or missing assets.
+>
+> **Three options in that case:**
+> 1. **Hash routing:** swap the router for \`<HashRouter>\` — the Pages path prefix no longer matters (URLs look like \`example.com/#/about\`).
+> 2. **Different platform:** if the project depends on SSR (Next.js, Remix), GitHub Pages is the wrong fit — jump to the **4.4 Vercel** lesson.
+> 3. **Refactor to the standard:** ask the builder / AI to convert the project to Vite + react-router-dom — then the steps below become applicable.
+>
+> If you already followed **Step 6 of lesson 2.1** (the GitHub Pages compatibility block in your prompt), you are most likely covered.
+
+### 🚀 Choose Your Deployment Method
 
 In this section, you can choose between two paths: the **AI-based automated** method (fast and recommended) or the **Manual** setup if you want to understand every step of the process.
 
@@ -872,6 +890,306 @@ If you use **project Pages** without a custom domain, the browser puts every req
       },
     },
     {
+      id: "vercel-alternative",
+      format: "reading",
+      title: {
+        hu: "4.4 Alternatíva: Vercel – GitHub Pages helyett",
+        en: "4.4 Alternative: Vercel – instead of GitHub Pages",
+      },
+      summary: {
+        hu: "Mikor válassz Vercel-t? Összehasonlítás GitHub Pages-szel, előnyök-hátrányok, és egy kb. 3 perces deploy workflow.",
+        en: "When to pick Vercel? A comparison with GitHub Pages, pros/cons, and a ~3-minute deployment workflow.",
+      },
+      duration: "20–30 perc olvasás",
+      videoUrl: null,
+      markdown: {
+        hu: `## Mi a Vercel?
+
+A **[Vercel](https://vercel.com/)** egy **hosting- és frontend-deploy platform**, amit a **Next.js** fejlesztői csapata épít. Nem csak statikus oldalakat, hanem **dinamikus React / Next.js / SvelteKit / Vite** alkalmazásokat is ki tud szolgálni – globális **CDN**-nel, automatikus **preview deploy**-okkal minden git branchre.
+
+Az ingyenes **Hobby** csomag bőven elég egy induló projekthez vagy portfólióhoz (non-commercial használatra).
+
+---
+
+## Miben más, mint a GitHub Pages?
+
+| Szempont | GitHub Pages | Vercel |
+|---|---|---|
+| **Ár (hobbi szint)** | Ingyenes | Ingyenes (Hobby, non-commercial) |
+| **Sávszélesség-limit** | 100 GB/hó (soft) | 100 GB/hó |
+| **Build időlimit** | 10 perc/job | 45 perc/build |
+| **Routing URL** | \`user.github.io/repo/\` (path prefix) | \`projekt.vercel.app\` (root domain) |
+| **Vite \`base\` kell?** | **Igen** – \`"/repo-neve/"\` | **Nem** – \`"/"\` marad |
+| **BrowserRouter \`basename\`** | Kell | Nem kell |
+| **Saját domain** | Ingyenes (csak DNS) | Ingyenes (csak DNS) |
+| **HTTPS (Let's Encrypt)** | Automatikus | Automatikus |
+| **Preview deploy** | ❌ (csak main) | ✅ **minden branch + PR** automatikus preview URL |
+| **Deploy trigger** | Manuális \`deploy.yml\` | Automatikus git integráció |
+| **SSR / serverless functions** | ❌ | ✅ (Edge Functions, Serverless) |
+| **Környezeti változók** | Csak build-time (GitHub Secrets) | Build-time **+ runtime** |
+| **Analytics** | ❌ | ✅ beépített (Hobby: korlátos) |
+| **Build log** | GitHub Actions felület | Vercel dashboard |
+| **Kereskedelmi használat** | Megengedett | Hobby-n **tiltva** – Pro kell ($20/hó) |
+| **Vendor lock-in** | Nulla (sima statikus fájlok) | Minimális (\`vercel.json\` opcionális) |
+
+---
+
+## Előnyök / hátrányok
+
+### Vercel előnyei
+- **Nulla konfiguráció** – a Vite projektet automatikusan felismeri, nem kell workflow-t írnod
+- **Preview deploy minden PR-hez** – mielőtt merge-elsz, kipróbálhatod a változást egy külön URL-en (csapatmunkánál óriási különbség)
+- **Gyorsabb build-to-live** – commit után ~30–60 másodperccel már élesben van
+- **Nincs \`base\` / \`basename\` vesződés** – root domainről szolgál, a routing „csak működik”
+- **Serverless funkciók** – ha később API végpontot kell hozzáadnod (űrlap-továbbítás, Stripe webhook), nem kell külön szerver
+
+### Vercel hátrányai
+- **Vendor dashboard** – a build logok és beállítások a Vercel oldalán vannak, nem a GitHubon
+- **Ingyenes csomag korlátai** – havi ~100 GB sávszélesség, 6000 build perc; nagy forgalmú oldalnál figyelni kell
+- **Kereskedelmi használat korlátozott** – a Hobby terv **non-commercial**; komoly projekthez **Pro ($20/hó)**
+- **Enyhe lock-in** – tiszta Vite projektnél minimális, de ha Vercel-specifikus Edge Function-öket használsz, nehezebb költözni
+
+### GitHub Pages előnyei
+- **Minden egy helyen** – kód, issue, CI, hosting ugyanabban a fiókban
+- **Nincs third-party vendor** – csak GitHubra van szükséged
+- **Teljes kontroll** – pontosan látod és módosíthatod, hogyan épül a build (\`.github/workflows/deploy.yml\`)
+- **Kereskedelmi használatra alkalmas** – nincs non-commercial kitétel
+
+### GitHub Pages hátrányai
+- **Routing komplikáció** – a \`base\` path prefixet nem felejtheted el, különben az oldal 404-et dob
+- **Nincs preview deploy** – csak a main branch megy élesbe
+- **Csak statikus tartalom** – nincs szerveroldali logika, nincsenek API végpontok
+
+---
+
+## Konkrét Vercel deploy workflow
+
+A Lovable-ből exportált (vagy bármilyen Vite + React) projekt Vercel-re tétele **kb. 3 perc**, GitHub Actions nélkül.
+
+### 1. lépés: regisztráció
+
+1. Nyisd meg a [vercel.com/signup](https://vercel.com/signup)-ot
+2. Válaszd a **„Continue with GitHub”** gombot – így egyben adsz is jogosultságot a repóid olvasására
+3. Engedélyezd Vercel-nek vagy az összes repód, vagy csak azt, amit deployolni szeretnél
+
+### 2. lépés: projekt importálása
+
+1. A Vercel dashboardon kattints az **„Add New… → Project”** gombra
+2. A **„Import Git Repository”** listából keresd meg a repót, majd **„Import”**
+3. Vercel automatikusan felismeri, hogy **Vite** projekt:
+   - **Framework Preset:** Vite
+   - **Build Command:** \`bun run build\` (vagy \`npm run build\`)
+   - **Output Directory:** \`dist\`
+   - **Install Command:** \`bun install\` (vagy \`npm install\`)
+4. Ha van **környezeti változód** (pl. Supabase URL, API kulcs), add meg az **„Environment Variables”** szekcióban
+5. Kattints a **„Deploy”** gombra
+
+### 3. lépés: élesben van
+
+Kb. 30–60 másodperc alatt:
+- A build lefut a Vercel szerverein
+- Kapsz egy automatikus URL-t: \`projekt-neve.vercel.app\`
+- Ezen kívül minden branch kap egy **preview URL-t**: pl. \`projekt-neve-git-feature-x.vercel.app\`
+
+### 4. lépés: állítsd vissza a Vite \`base\`-t
+
+**Fontos:** ha előzőleg GitHub Pages-re optimalizáltad a projektet (pl. \`base: "/repo-neve/"\`), Vercelen **állítsd vissza** gyökérre, különben az oldalak rossz útvonalon keresnék a fájlokat:
+
+\`\`\`ts
+export default defineConfig({
+  base: "/", // Vercel root domainről szolgál
+  plugins: [react()],
+  // ...
+});
+\`\`\`
+
+Az \`App.tsx\`-ben a \`basename={import.meta.env.BASE_URL}\` **maradhat** – ez Vercelen automatikusan \`/\`-ra oldódik, tehát nem kell változtatni.
+
+### 5. lépés: saját domain (opcionális)
+
+1. A projekt dashboardján: **Settings → Domains**
+2. Add meg a domained (pl. \`sajatweb.hu\`)
+3. Vercel kijelzi a DNS rekordokat, amiket a regisztrátorodnál be kell állítanod:
+   - **A rekord** a gyökérhez (\`@\`) → \`76.76.21.21\`
+   - **CNAME rekord** a \`www\`-hez → \`cname.vercel-dns.com\`
+4. Mentés után Vercel **automatikusan** kér SSL tanúsítványt (Let's Encrypt) – kb. 1–5 perc
+
+---
+
+## Automatikus deploy minden pushra – ingyen
+
+A Vercel **git integrációjának** lényege: minden commit, ami a **main**-re érkezik, **automatikusan élesbe** megy. Minden feature branch **automatikusan kap egy preview URL-t**. Nincs szükség \`deploy.yml\`-re, nincs Actions konfigurálás.
+
+\`\`\`
+git push origin main        → projekt.vercel.app                  (élő)
+git push origin feature-x   → projekt-git-feature-x.vercel.app    (preview)
+\`\`\`
+
+---
+
+## Mikor válassz mit?
+
+- **Csak landing / portfólió, nincs szerver-logika, kereskedelmi is:** GitHub Pages.
+- **Csapatmunka, PR review-k, preview deploy fontos:** **Vercel**.
+- **Kell serverless funkció, form backend, Stripe webhook:** **Vercel** (vagy Netlify).
+- **SSR / Next.js / Remix:** csak **Vercel** (GitHub Pages nem alkalmas).
+- **Tanulni szeretnéd a CI/CD-t:** maradj a GitHub Pages + Actions úton – pontosan látod, mi történik.
+
+---
+
+## Gyakorlat
+
+1. Regisztrálj a [vercel.com](https://vercel.com)-en GitHub fiókkal.
+2. Importáld a Lovable-ből exportált repódat (vagy egy másik Vite projektet tesztnek).
+3. Deploy után nyisd meg a kapott \`*.vercel.app\` URL-t – működik-e minden útvonal?
+4. Hozz létre egy teszt branchet, pushold – kapsz-e **preview URL-t** a dashboardon?
+5. (Opcionális) Hasonlítsd össze a GitHub Pages és a Vercel buildet: melyik gyorsabb nálad?
+`,
+        en: `## What is Vercel?
+
+**[Vercel](https://vercel.com/)** is a **hosting and frontend deploy platform** built by the **Next.js** team. It serves not only static sites but also **dynamic React / Next.js / SvelteKit / Vite** apps — over a global **CDN**, with automatic **preview deploys** for every git branch.
+
+The free **Hobby** plan is more than enough for a starter project or portfolio (non-commercial use).
+
+---
+
+## How does it differ from GitHub Pages?
+
+| Aspect | GitHub Pages | Vercel |
+|---|---|---|
+| **Cost (hobby tier)** | Free | Free (Hobby, non-commercial) |
+| **Bandwidth limit** | 100 GB/mo (soft) | 100 GB/mo |
+| **Build time limit** | 10 min/job | 45 min/build |
+| **Routing URL** | \`user.github.io/repo/\` (path prefix) | \`project.vercel.app\` (root domain) |
+| **Vite \`base\` needed?** | **Yes** – \`"/repo-name/"\` | **No** – stays \`"/"\` |
+| **BrowserRouter \`basename\`** | Required | Not required |
+| **Custom domain** | Free (DNS only) | Free (DNS only) |
+| **HTTPS (Let's Encrypt)** | Automatic | Automatic |
+| **Preview deploy** | ❌ (main only) | ✅ **every branch + PR** gets a preview URL |
+| **Deploy trigger** | Manual \`deploy.yml\` | Automatic git integration |
+| **SSR / serverless functions** | ❌ | ✅ (Edge Functions, Serverless) |
+| **Environment variables** | Build-time only (GitHub Secrets) | Build-time **+ runtime** |
+| **Analytics** | ❌ | ✅ built-in (Hobby: limited) |
+| **Build logs** | GitHub Actions UI | Vercel dashboard |
+| **Commercial use** | Allowed | **Blocked** on Hobby — Pro required ($20/mo) |
+| **Vendor lock-in** | None (plain static files) | Minimal (\`vercel.json\` optional) |
+
+---
+
+## Pros / cons
+
+### Vercel pros
+- **Zero config** — detects the Vite project automatically, no workflow to write
+- **Preview deploy for every PR** — test the change on a separate URL before merging (huge for teams)
+- **Faster build-to-live** — typically live within ~30–60 seconds of a commit
+- **No \`base\` / \`basename\` fiddling** — served from the root domain, routing "just works"
+- **Serverless functions** — if you later need an API endpoint (form relay, Stripe webhook), no separate server required
+
+### Vercel cons
+- **Vendor dashboard** — build logs and settings live on Vercel, not GitHub
+- **Free-tier limits** — ~100 GB bandwidth/mo, 6000 build minutes; watch out on high-traffic sites
+- **Commercial use restricted** — Hobby is **non-commercial**; production projects need **Pro ($20/mo)**
+- **Mild lock-in** — negligible for a plain Vite project, but Vercel-specific Edge Functions make migration harder
+
+### GitHub Pages pros
+- **Everything in one place** — code, issues, CI, hosting under a single account
+- **No third-party vendor** — you only need GitHub
+- **Full control** — you see and edit exactly how the build runs (\`.github/workflows/deploy.yml\`)
+- **Commercial-friendly** — no non-commercial clause
+
+### GitHub Pages cons
+- **Routing complexity** — you can't forget the \`base\` path prefix, or the site returns 404s
+- **No preview deploys** — only main goes live
+- **Static only** — no server-side logic, no API endpoints
+
+---
+
+## Concrete Vercel deploy workflow
+
+Deploying a Lovable-exported (or any Vite + React) project to Vercel takes **~3 minutes**, without GitHub Actions.
+
+### Step 1: sign up
+
+1. Open [vercel.com/signup](https://vercel.com/signup)
+2. Choose **"Continue with GitHub"** — this also grants Vercel read access to your repos
+3. Allow Vercel to see either all repos or just the one you want to deploy
+
+### Step 2: import the project
+
+1. On the Vercel dashboard click **"Add New… → Project"**
+2. In the **"Import Git Repository"** list find your repo and click **"Import"**
+3. Vercel auto-detects that it's a **Vite** project:
+   - **Framework Preset:** Vite
+   - **Build Command:** \`bun run build\` (or \`npm run build\`)
+   - **Output Directory:** \`dist\`
+   - **Install Command:** \`bun install\` (or \`npm install\`)
+4. If you have **environment variables** (e.g. Supabase URL, API keys), enter them under **"Environment Variables"**
+5. Click **"Deploy"**
+
+### Step 3: it's live
+
+In ~30–60 seconds:
+- The build runs on Vercel's servers
+- You get an automatic URL: \`project-name.vercel.app\`
+- Every branch also gets a **preview URL**: e.g. \`project-name-git-feature-x.vercel.app\`
+
+### Step 4: reset the Vite \`base\`
+
+**Important:** if you previously tuned the project for GitHub Pages (e.g. \`base: "/repo-name/"\`), **reset it** to root on Vercel, otherwise pages will look for assets at the wrong path:
+
+\`\`\`ts
+export default defineConfig({
+  base: "/", // Vercel serves from the root domain
+  plugins: [react()],
+  // ...
+});
+\`\`\`
+
+The \`basename={import.meta.env.BASE_URL}\` in \`App.tsx\` **can stay** — it resolves to \`/\` on Vercel automatically.
+
+### Step 5: custom domain (optional)
+
+1. In the project dashboard: **Settings → Domains**
+2. Enter your domain (e.g. \`mybrand.com\`)
+3. Vercel shows the DNS records you must set at your registrar:
+   - **A record** for the apex (\`@\`) → \`76.76.21.21\`
+   - **CNAME record** for \`www\` → \`cname.vercel-dns.com\`
+4. After saving Vercel requests an SSL certificate (Let's Encrypt) **automatically** — about 1–5 minutes
+
+---
+
+## Automatic deploy on every push — free
+
+The core of Vercel's **git integration**: every commit landing on **main** **automatically** goes live. Every feature branch **automatically gets a preview URL**. No \`deploy.yml\`, no Actions config.
+
+\`\`\`
+git push origin main        → project.vercel.app                  (live)
+git push origin feature-x   → project-git-feature-x.vercel.app    (preview)
+\`\`\`
+
+---
+
+## Which one to pick?
+
+- **Just a landing page / portfolio, no server logic, commercial OK:** GitHub Pages.
+- **Team work, PR reviews, preview deploys matter:** **Vercel**.
+- **Need serverless functions, form backend, Stripe webhook:** **Vercel** (or Netlify).
+- **SSR / Next.js / Remix:** **Vercel** only (GitHub Pages doesn't fit).
+- **Want to learn CI/CD:** stick with GitHub Pages + Actions — you see exactly what happens.
+
+---
+
+## Exercise
+
+1. Sign up at [vercel.com](https://vercel.com) with your GitHub account.
+2. Import your Lovable-exported repo (or another Vite project for testing).
+3. Open the \`*.vercel.app\` URL you get — do all routes work?
+4. Create a test branch, push it — do you get a **preview URL** in the dashboard?
+5. (Optional) Compare the GitHub Pages and Vercel builds: which one is faster for you?
+`,
+      },
+    },
+    {
       id: "github-quiz",
       format: "quiz",
       title: {
@@ -879,8 +1197,8 @@ If you use **project Pages** without a custom domain, the browser puts every req
         en: "Section 4 – Quiz & Practice",
       },
       summary: {
-        hu: "Ellenőrizd a tudásod a GitHub, GitHub Actions és GitHub Pages témákban – majd végezd el a 10-15 perces gyakorlati feladatot.",
-        en: "Test your knowledge of GitHub, GitHub Actions, and GitHub Pages — then complete the 10–15 minute hands-on task.",
+        hu: "Ellenőrizd a tudásod a GitHub, GitHub Actions, GitHub Pages és Vercel témákban – majd végezd el a 10-15 perces gyakorlati feladatot.",
+        en: "Test your knowledge of GitHub, GitHub Actions, GitHub Pages, and Vercel — then complete the 10–15 minute hands-on task.",
       },
       duration: "10–15 perc kvíz + feladat",
       videoUrl: null,
@@ -1034,6 +1352,36 @@ If you use **project Pages** without a custom domain, the browser puts every req
           explanation: {
             hu: "Projekt Pages-nél az URL pl. `username.github.io/repo-neve/` – ha a Vite base nincs beállítva a repo nevére, a statikus fájlok 404-et dobnak.",
             en: "With project Pages, the URL is e.g. `username.github.io/repo-name/` — if Vite base isn't set to the repo name, static assets return 404.",
+          },
+        },
+        {
+          id: "gh-q6",
+          question: {
+            hu: "Mi az egyik legnagyobb különbség a Vercel és a GitHub Pages között egy Vite + React projektnél?",
+            en: "What is one of the biggest differences between Vercel and GitHub Pages for a Vite + React project?",
+          },
+          options: [
+            {
+              hu: "Vercel root domainről szolgál, ezért nincs szükség `base` vagy `basename` beállításra, és minden branch kap automatikus preview URL-t",
+              en: "Vercel serves from the root domain, so no `base` or `basename` setup is needed, and every branch gets an automatic preview URL",
+            },
+            {
+              hu: "A Vercel csak statikus HTML-t tud kiszolgálni, míg a GitHub Pages dinamikus backendet is",
+              en: "Vercel can only serve static HTML, while GitHub Pages also supports dynamic backends",
+            },
+            {
+              hu: "A Vercel fizetős, a GitHub Pages ingyenes – ezért csak nagy cégek használják a Vercel-t",
+              en: "Vercel is paid and GitHub Pages is free — so only large companies use Vercel",
+            },
+            {
+              hu: "A Vercel csak Next.js projekteket fogad el, a Vite-ot nem támogatja",
+              en: "Vercel accepts only Next.js projects and does not support Vite",
+            },
+          ],
+          correctIndex: 0,
+          explanation: {
+            hu: "A Vercel gyökér domainről szolgál (`projekt.vercel.app`), így a Vite `base` maradhat `/`, és nem kell `basename` a routerben. Emellett minden branch automatikusan kap egy preview URL-t – ez GitHub Pages-en külön konfiguráció nélkül nem elérhető. A Hobby csomag ingyenes (non-commercial), és a Vite hivatalosan támogatott preset.",
+            en: "Vercel serves from a root domain (`project.vercel.app`), so the Vite `base` can stay `/` and no router `basename` is needed. Every branch also gets an automatic preview URL — something GitHub Pages doesn't offer out of the box. The Hobby plan is free (non-commercial) and Vite is a first-class supported preset.",
           },
         },
       ],

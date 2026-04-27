@@ -1,5 +1,7 @@
 import { githubAndDeploySection } from "./githubSection";
 import { localModSection } from "./localModSection";
+import { secondCourse } from "./secondCourse";
+import type { Course, CourseLesson } from "./courseContentTypes";
 
 export type {
   LocalizedText,
@@ -595,12 +597,47 @@ Kerülendő: […]
 
 ---
 
+## 6. lépés: GitHub Pages kompatibilitás – rakd a prompt végére
+
+A kész oldalt a kurzus **4. szekciójában GitHub Pages**-re publikáljuk. A projekt-oldalak egy **path prefix** alatt szolgálódnak ki (\`username.github.io/repo-neve/\`), ezért a buildernek már az elején meg kell mondanunk, hogy **routing-kompatibilis** projektet generáljon. Enélkül az oldal élesben **404**-et vagy üres képernyőt ad.
+
+**Illeszd be a prompt végére ezt a blokkot:**
+
+\`\`\`text
+Fontos: ezt a projektet GitHub Pages-re fogom deployolni, ezért a routing-nak kompatibilisnek kell lennie alútvonalakkal. Kérlek a következőket biztosítsd:
+
+1. A vite.config.ts-ben legyen beállítva a base érték a repository nevére (a repo név helyét később könnyen átírom):
+
+export default defineConfig({
+  base: "/repo-neve/",
+  plugins: [react()],
+  // ...
+});
+
+2. Az src/App.tsx-ben a <BrowserRouter> kapjon basename paramétert, ami a Vite környezeti változóból olvas:
+
+<BrowserRouter basename={import.meta.env.BASE_URL}>
+  <Routes>
+    {/* ... útvonalak */}
+  </Routes>
+</BrowserRouter>
+
+A fenti két beállítás nélkül a GitHub Pages deploy után az oldal 404-et vagy üres képernyőt ad.
+\`\`\`
+
+> **Miért most?** Ha a Lovable kemény (\`/\`) útvonalakkal generál, utólag kézzel kell kijavítanod a routert – fájdalommentesebb, ha az elejétől jó.
+>
+> **Vercelre deployolnál?** Akkor a \`base\` maradhat \`/\` és a \`basename\` sem kell. A fenti beállítás mindkét úttal kompatibilis, mert \`import.meta.env.BASE_URL\` a Vite \`base\`-ét követi – csak akkor hat, ha szükséges. (Részletek: **4.4 lecke**.)
+
+---
+
 ## Gyakorlat
 
 1. Diktálj 5 percet a ChatGPT-nek egy valós ötletről, kérd meg, hogy **egy összefoglaló „builder-promptot”** írjon belőle.
 2. Válassz **2 szekció-mintát** a 21st.dev-en, és **nevezd meg** őket a promptban.
 3. Adj hozzá **1 példa weboldalt** URL-lel + 2 mondatos „mit másoljunk el” leírással.
-4. Másold be a teljes szöveget egy **jegyzetbe** – ez lesz a **Lovable / más builder** induló promptja a következő leckékhez.
+4. Illeszd a prompt végére a **6. lépés GitHub Pages kompatibilitás** blokkját.
+5. Másold be a teljes szöveget egy **jegyzetbe** – ez lesz a **Lovable / más builder** induló promptja a következő leckékhez.
 `,
             en: `## Rule #1: make the prompt *very* detailed
 
@@ -683,12 +720,47 @@ Avoid: […]
 
 ---
 
+## Step 6: GitHub Pages compatibility — paste this at the end
+
+We will publish the finished site to **GitHub Pages** in **Section 4**. GitHub Pages project sites are served under a **path prefix** (\`username.github.io/repo-name/\`), so you must tell the builder **up front** to generate a **routing-compatible** project. Otherwise the live site will throw **404s** or show a blank page.
+
+**Paste this block at the end of your prompt:**
+
+\`\`\`text
+Important: I will deploy this project to GitHub Pages, so the routing must be compatible with sub-paths. Please ensure:
+
+1. In vite.config.ts, set the base value to the repository name (I can easily swap the repo name later):
+
+export default defineConfig({
+  base: "/repo-name/",
+  plugins: [react()],
+  // ...
+});
+
+2. In src/App.tsx, give <BrowserRouter> a basename prop that reads from the Vite env:
+
+<BrowserRouter basename={import.meta.env.BASE_URL}>
+  <Routes>
+    {/* ... routes */}
+  </Routes>
+</BrowserRouter>
+
+Without these two settings, the GitHub Pages deploy will return 404s or a blank screen.
+\`\`\`
+
+> **Why now?** If Lovable hard-codes (\`/\`) paths, you will have to fix the router afterwards by hand. Baking this in up front saves pain later.
+>
+> **Deploying to Vercel instead?** Then \`base\` can stay \`/\` and \`basename\` is not needed. The setup above is safely compatible with both paths because \`import.meta.env.BASE_URL\` tracks the Vite \`base\` — it only kicks in when it needs to. (Details: **lesson 4.4**.)
+
+---
+
 ## Exercise
 
 1. Dictate for ~5 minutes, then ask the model for a single **“builder-ready prompt”**.
 2. Pick **two section patterns** on 21st.dev and **name them** in the prompt.
 3. Add **one reference site** with URL + two sentences on what to mimic.
-4. Save the full text as your **starting prompt** for Lovable or another builder in the next lessons.
+4. Append the **Step 6 GitHub Pages compatibility** block to the end of the prompt.
+5. Save the full text as your **starting prompt** for Lovable or another builder in the next lessons.
 `,
           },
         },
@@ -910,8 +982,9 @@ A Lovable-ban összerakott alkalmazás **nem csak vázlat**: **azonnal publikál
 |----|--------|
 | **Lovable custom domain** | A platform **meg tudja** kötni a saját domained – ez a hivatalos dokumentáció szerint a **fizetős (Pro) csomag** része. Kényelmes, egy helyen maradsz, de **nem ingyenes** opció. |
 | **Export → GitHub → GitHub Pages + DNS** | A projektet **kiexportáljuk GitHubra**; a kód **nálad** van. A **GitHub Pages** (megfelelő beállításokkal) **ingyen** kiszolgálhatja az oldalt; a **saját domain** a **DNS** beállításával jön rá (későbbi leckék) – **a Lovable fizetős domain-szolgáltatása nélkül** is megoldható. |
+| **Export → GitHub → Vercel + DNS** | Ugyanaz az export, de a hostingot a **Vercel** végzi (ingyenes Hobby csomag, non-commercial). Nincs \`base\` / \`basename\` vesződés, minden branchhez automatikus preview URL. Részletek: **4.4 lecke**. |
 
-**Ebben a kurzusban** a második utat választjuk: **export**, **GitHub**, majd **ingyenes** publikálás és a **saját domain** beállítása (DNS) a domainedhez.
+**Ebben a kurzusban** a második utat választjuk alapértelmezettnek (**export + GitHub Pages**), a **4.4 Vercel** lecke pedig megmutatja az alternatívát.
 
 ---
 
@@ -990,8 +1063,9 @@ What you build in Lovable is not just a mock: you can **publish it right away**,
 |------|----------------|
 | **Custom domain inside Lovable** | Lovable can connect your domain—this is a **paid (Pro)** capability per official docs. Convenient, all-in-one, **not free**. |
 | **Export → GitHub → GitHub Pages + DNS** | Export the project to **GitHub**; you **own the code**. **GitHub Pages** can host **for free** (with the right setup); your domain is wired via **DNS** (later lessons)—**without** paying Lovable for domain hosting. |
+| **Export → GitHub → Vercel + DNS** | Same export, but hosting is handled by **Vercel** (free Hobby plan, non-commercial). No \`base\` / \`basename\` fiddling, automatic preview URL for every branch. See **lesson 4.4**. |
 
-**This course** follows the second path: **export**, **GitHub**, then a **free** publishing path to your own domain.
+**This course** treats the second path (**export + GitHub Pages**) as the default, with **lesson 4.4** showing Vercel as the alternative.
 
 ---
 
@@ -1967,20 +2041,52 @@ The embedded video below walks through enabling HTTPS and the go-live checklist.
   ],
 };
 
-export const allLessons = firstCourse.sections.flatMap((section) => section.lessons);
+export { secondCourse } from "./secondCourse";
 
-export const firstLessonId = allLessons[0]?.id ?? "";
+export const allCourses: Course[] = [firstCourse, secondCourse];
 
-export const findLessonById = (lessonId: string) => allLessons.find((lesson) => lesson.id === lessonId);
+const flattenCourseLessons = (course: Course) =>
+  course.sections.flatMap((section) => section.lessons);
+
+export const allLessons = allCourses.flatMap(flattenCourseLessons);
+
+export const firstLessonId = flattenCourseLessons(firstCourse)[0]?.id ?? "";
+
+export const findLessonById = (lessonId: string) =>
+  allLessons.find((lesson) => lesson.id === lessonId);
+
+export const findCourseByLessonId = (lessonId: string): Course | undefined =>
+  allCourses.find((course) =>
+    course.sections.some((section) =>
+      section.lessons.some((lesson) => lesson.id === lessonId),
+    ),
+  );
+
+export const findCourseById = (courseId: string): Course | undefined =>
+  allCourses.find((course) => course.id === courseId);
+
+export const getCourseFirstLessonId = (courseId: string): string => {
+  const course = findCourseById(courseId);
+  return course ? flattenCourseLessons(course)[0]?.id ?? "" : "";
+};
 
 export const getLessonNeighbors = (lessonId: string) => {
-  const index = allLessons.findIndex((lesson) => lesson.id === lessonId);
+  const course = findCourseByLessonId(lessonId);
+  if (!course) {
+    return { previousLesson: undefined, nextLesson: undefined };
+  }
+
+  const lessons = flattenCourseLessons(course);
+  const index = lessons.findIndex((lesson) => lesson.id === lessonId);
   if (index === -1) {
     return { previousLesson: undefined, nextLesson: undefined };
   }
 
   return {
-    previousLesson: allLessons[index - 1],
-    nextLesson: allLessons[index + 1],
+    previousLesson: lessons[index - 1] as CourseLesson | undefined,
+    nextLesson: lessons[index + 1] as CourseLesson | undefined,
   };
 };
+
+export const getCourseLessonCount = (course: Course) =>
+  flattenCourseLessons(course).length;

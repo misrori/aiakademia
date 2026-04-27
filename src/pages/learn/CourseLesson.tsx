@@ -4,7 +4,13 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { BookOpen, ChevronLeft, ChevronRight, Clock, GraduationCap, PlayCircle } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { findLessonById, firstLessonId, getLessonNeighbors } from "@/data/courseContent";
+import {
+  allCourses,
+  findCourseByLessonId,
+  findLessonById,
+  firstLessonId,
+  getLessonNeighbors,
+} from "@/data/courseContent";
 import type { CourseLesson as CourseLessonData } from "@/data/courseContentTypes";
 import ProjectOverview from "./ProjectOverview";
 import LessonQuiz from "@/components/LessonQuiz";
@@ -91,6 +97,12 @@ const CourseLesson: React.FC = () => {
   const { previousLesson, nextLesson } = getLessonNeighbors(lesson.id);
   const md = lesson.markdown[language];
   const isQuiz = lesson.format === "quiz";
+  const course = findCourseByLessonId(lesson.id) ?? allCourses[0];
+  const courseIndex = allCourses.findIndex((c) => c.id === course.id);
+  const isAccentCourse = courseIndex === 1;
+  const courseLabel = language === "hu"
+    ? `${courseIndex + 1}. kurzus · ${course.title.hu}`
+    : `Course ${courseIndex + 1} · ${course.title.en}`;
   const showVideo =
     !isQuiz &&
     lesson.videoUrl &&
@@ -104,14 +116,35 @@ const CourseLesson: React.FC = () => {
 
   return (
     <article className="animate-fade-in pb-16">
-      <header className={`mb-8 rounded-2xl border p-6 ${isQuiz ? "border-primary/30 bg-gradient-to-br from-primary/10 via-card to-card" : "border-border bg-card"}`}>
-        <p className="text-sm text-primary font-semibold mb-2 flex items-center gap-2">
-          {isQuiz && <GraduationCap className="w-4 h-4" />}
-          {language === "hu" ? "1. kurzus" : "Course 1"}
-        </p>
-        <h1 className="text-3xl md:text-4xl font-bold mb-3 text-foreground">{lesson.title[language]}</h1>
-        <p className="text-muted-foreground mb-4">{lesson.summary[language]}</p>
-        <LessonMeta lesson={lesson} language={language} />
+      <header
+        className={`mb-8 rounded-2xl border p-6 relative overflow-hidden ${
+          isQuiz
+            ? isAccentCourse
+              ? "border-accent/30 bg-gradient-to-br from-accent/10 via-card to-card"
+              : "border-primary/30 bg-gradient-to-br from-primary/10 via-card to-card"
+            : "border-border bg-card"
+        }`}
+      >
+        <div
+          className={`absolute -top-20 -right-20 w-64 h-64 rounded-full blur-3xl opacity-40 pointer-events-none ${
+            isAccentCourse ? "bg-accent/20" : "bg-primary/20"
+          }`}
+        />
+        <div className="relative">
+          <p
+            className={`text-xs font-semibold mb-3 flex items-center gap-2 uppercase tracking-wider ${
+              isAccentCourse ? "text-accent" : "text-primary"
+            }`}
+          >
+            {isQuiz && <GraduationCap className="w-4 h-4" />}
+            {courseLabel}
+          </p>
+          <h1 className="text-3xl md:text-4xl font-bold mb-3 text-foreground">
+            {lesson.title[language]}
+          </h1>
+          <p className="text-muted-foreground mb-4">{lesson.summary[language]}</p>
+          <LessonMeta lesson={lesson} language={language} />
+        </div>
       </header>
 
       {showVideo && (
@@ -177,9 +210,11 @@ const CourseLesson: React.FC = () => {
         {previousLesson ? (
           <Link
             to={`/learn/${previousLesson.id}`}
-            className="flex items-center gap-3 rounded-xl border border-border bg-card p-4 hover:border-primary/50 transition-colors"
+            className={`flex items-center gap-3 rounded-xl border border-border bg-card p-4 transition-colors ${
+              isAccentCourse ? "hover:border-accent/50" : "hover:border-primary/50"
+            }`}
           >
-            <ChevronLeft className="w-5 h-5 text-primary" />
+            <ChevronLeft className={`w-5 h-5 ${isAccentCourse ? "text-accent" : "text-primary"}`} />
             <div>
               <p className="text-xs uppercase tracking-wide text-muted-foreground">
                 {language === "hu" ? "Előző lecke" : "Previous lesson"}
@@ -194,7 +229,9 @@ const CourseLesson: React.FC = () => {
         {nextLesson ? (
           <Link
             to={`/learn/${nextLesson.id}`}
-            className="flex items-center justify-end gap-3 rounded-xl border border-border bg-card p-4 hover:border-primary/50 transition-colors text-right"
+            className={`flex items-center justify-end gap-3 rounded-xl border border-border bg-card p-4 transition-colors text-right ${
+              isAccentCourse ? "hover:border-accent/50" : "hover:border-primary/50"
+            }`}
           >
             <div>
               <p className="text-xs uppercase tracking-wide text-muted-foreground">
@@ -202,7 +239,7 @@ const CourseLesson: React.FC = () => {
               </p>
               <p className="font-medium text-foreground">{nextLesson.title[language]}</p>
             </div>
-            <ChevronRight className="w-5 h-5 text-primary" />
+            <ChevronRight className={`w-5 h-5 ${isAccentCourse ? "text-accent" : "text-primary"}`} />
           </Link>
         ) : (
           <div />
